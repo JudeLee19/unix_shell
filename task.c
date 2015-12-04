@@ -15,9 +15,9 @@ const char *prompt = "myshell> ";
 char *cmdvector[MAX_CMD_ARG];
 char  cmdline[BUFSIZ];
 
-char *cmdvectorPipe1[3];
-char *cmdvectorPipe2[3];
-char *cmdvectorPipe3[3];
+char *cmdvectorPipe1[4];
+char *cmdvectorPipe2[4];
+char *cmdvectorPipe3[4];
 
 void fatal(char *str){
 	perror(str);
@@ -123,11 +123,11 @@ int main(int argc, char **argv){
             cmdvectorPipe3[j] = cmdvector[t];
             j++;
         }
-        /*
+    
         printf("\n 일단 1: %s %s\n", cmdvectorPipe1[0], cmdvectorPipe1[1]);
         printf("\n 일단 2: %s %s\n", cmdvectorPipe2[0], cmdvectorPipe2[1]);
         printf("\n 일단 3: %s %s\n", cmdvectorPipe3[0], cmdvectorPipe3[1]);
-        */
+    
         
         // ----------------------------------------------------------//
 
@@ -154,6 +154,11 @@ int main(int argc, char **argv){
                         
                         // close all pipes (very important!); end we're using was safely copied
                         
+                        close(pipes[0]);
+                        close(pipes[1]);
+                        close(pipes[2]);
+                        close(pipes[3]);
+                        
                     }
                     
                     execvp(cmdvectorPipe1[0], cmdvectorPipe1);
@@ -178,12 +183,16 @@ int main(int argc, char **argv){
                             
                             // close all ends of pipes
                             
-                           
+                            
+                            close(pipes[0]);
+                            close(pipes[1]);
+                            close(pipes[2]);
+                            close(pipes[3]);
+                            execvp(cmdvectorPipe2[0], cmdvectorPipe2);
                         }
-                        execvp(cmdvectorPipe2[0], cmdvectorPipe2);
+                        
                     }
                     else{
-                        wait(NULL);
                         // fork third child (to execute cut)
                         
                         if (cmdvectorPipe2[0] != NULL && cmdvectorPipe3[0] != NULL){
@@ -195,6 +204,10 @@ int main(int argc, char **argv){
                                 // close all ends of pipes
                                 
                                 
+                                close(pipes[0]);
+                                close(pipes[1]);
+                                close(pipes[2]);
+                                close(pipes[3]);
                                 
                                 execvp(cmdvectorPipe3[0], cmdvectorPipe3);
                             }
